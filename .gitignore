@@ -19,6 +19,6 @@ example/
 
 # Ignore all checkpoints by default, but explicitly allow the custom West bat model
 checkpoints/*
-!checkpoints/bats/
-!checkpoints/bats/v1.0/
-!checkpoints/bats/v1.0/BattyBirdNET-USA-WEST-256kHz.tflite
+checkpoints/bats/
+checkpoints/bats/v1.0/
+checkpoints/bats/v1.0/BattyBirdNET-USA-WEST-256kHz.tflite
