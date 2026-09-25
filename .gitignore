@@ -1,0 +1,24 @@
+# Python / Environment / Logs
+batenv/
+*.log
+*.txt
+.DS_Store
+__pycache__/
+
+# Upstream runtime modules & support folders copied locally during deployment
+audio.py
+model.py
+utils.py
+client.py
+server.py
+config.py
+species.py
+gui/
+labels/
+example/
+
+# Ignore all checkpoints by default, but explicitly allow the custom West bat model
+checkpoints/*
+!checkpoints/bats/
+!checkpoints/bats/v1.0/
+!checkpoints/bats/v1.0/BattyBirdNET-USA-WEST-256kHz.tflite
