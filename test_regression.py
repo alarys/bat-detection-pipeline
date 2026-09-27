@@ -9,6 +9,14 @@ import subprocess
 import pandas as pd
 import numpy as np
 
+def log_error(msg: str):
+    """Outputs error messages to both STDERR and a dedicated log file."""
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    sys.stderr.write(msg_with_timestamp + "\n")
+    sys.stderr.flush()
+    with open("test_regression_errors.log", "a", encoding="utf-8") as err_file:
+        err_file.write(msg_with_timestamp + "\n")
+
 # Storage & Model Configuration
 NFS_MOUNT = "/mnt/tweety/verified"
 BASELINE_WAV = os.path.join(NFS_MOUNT, "XC883525 - Little Brown Myotis - Myotis lucifugus.wav")
@@ -25,21 +33,23 @@ MIN_CONFIDENCE = 0.99
 TIMESTAMP_TOLERANCE_SEC = 0.5  # Seconds allowed for start/end timestamp drift
 
 
+import datetime
+
 def run_regression_test():
     print("=== Running Audio Pipeline Regression Test ===")
 
     # Step 0: Pre-flight Verification
     print("[0/4] Verifying storage mounts and files...")
     if not os.path.exists(BASELINE_WAV):
-        print(f"[FAIL] Baseline WAV missing: {BASELINE_WAV}\nEnsure NFS share is mounted.")
+        log_error(f"[FAIL] Baseline WAV missing: {BASELINE_WAV}\nEnsure NFS share is mounted.")
         sys.exit(1)
     
     if not os.path.exists(BASELINE_CSV):
-        print(f"[FAIL] Baseline ground-truth CSV missing: {BASELINE_CSV}")
+        log_error(f"[FAIL] Baseline ground-truth CSV missing: {BASELINE_CSV}")
         sys.exit(1)
 
     if not os.path.exists(MODEL_PATH):
-        print(f"[FAIL] Classifier model missing: {MODEL_PATH}")
+        log_error(f"[FAIL] Classifier model missing: {MODEL_PATH}")
         sys.exit(1)
 
     os.makedirs(TEST_DIR, exist_ok=True)

@@ -31,14 +31,24 @@ import model
 import species
 import utils
 
+def log_skip(msg: str):
+    """Outputs skip message to stdout and appends to skip log file."""
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    print(msg_with_timestamp, flush=True)
+    with open(LOG_SKIP_PATH, "a", encoding="utf-8") as log_f:
+        log_f.write(msg_with_timestamp + "\n")
+
 LOG_SKIP_PATH = "analyze_skips.log"
 
 
+import datetime
+
 def log_skip(msg: str):
     """Outputs skip message to stdout and appends to skip log file."""
-    print(msg, flush=True)
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    print(msg_with_timestamp, flush=True)
     with open(LOG_SKIP_PATH, "a", encoding="utf-8") as log_f:
-        log_f.write(msg + "\n")
+        log_f.write(msg_with_timestamp + "\n")
 
 
 def loadCodes():

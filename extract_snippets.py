@@ -17,6 +17,15 @@ import pandas as pd
 import soundfile as sf
 from mutagen.id3 import ID3, TIT2, TPE1, COMM
 from mutagen.wave import WAVE
+import datetime
+
+def log_error(msg: str):
+    """Outputs error messages to both STDERR and a dedicated log file."""
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    sys.stderr.write(msg_with_timestamp + "\n")
+    sys.stderr.flush()
+    with open("extract_snippets_errors.log", "a", encoding="utf-8") as err_file:
+        err_file.write(msg_with_timestamp + "\n")
 
 # Path Configuration
 CSV_DIR = "/mnt/tweety/Archive/reports"
@@ -69,10 +78,12 @@ def log_processed_file(csv_filename: str):
         f.write(f"{csv_filename}\n")
 
 
+import datetime
+
 def process_csv_and_extract():
     print("=== Running Pre-Flight Sanity Checks ===")
     if not validate_nfs_mount(RAW_AUDIO_DIR):
-        print("\nAborting: Input NFS mount check failed.", flush=True)
+        log_error("\nAborting: Input NFS mount check failed.")
         sys.exit(1)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -120,7 +131,7 @@ def process_csv_and_extract():
             skipped_no_detection += 1
             log_processed_file(filename)
         except Exception as e:
-            print(f"[WARN] Read failure on {filename}: {e}")
+            log_error(f"[WARN] Read failure on {filename}: {e}")
 
     print(f"Total CSV Files Scanned:        {total_csv_files}")
     print(f"Previously Processed (Skipped): {already_processed}")

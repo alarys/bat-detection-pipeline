@@ -8,6 +8,15 @@ import sys
 import gc
 import soundfile as sf
 import librosa
+import datetime
+
+def log_error(msg: str):
+    """Outputs error messages to both STDERR and a dedicated log file."""
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    sys.stderr.write(msg_with_timestamp + "\n")
+    sys.stderr.flush()
+    with open(ERROR_LOG_PATH, "a", encoding="utf-8") as err_file:
+        err_file.write(msg_with_timestamp + "\n")
 
 INPUT_DIR = "/mnt/tweety/Raw/"
 OUTPUT_DIR = "/mnt/c/AudioMoth/Ready_256kHz"
@@ -23,10 +32,11 @@ DELETE_NON_192KHZ_FILES = False
 
 def log_error(msg: str):
     """Outputs error messages to both STDERR and a dedicated log file."""
-    sys.stderr.write(msg + "\n")
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    sys.stderr.write(msg_with_timestamp + "\n")
     sys.stderr.flush()
     with open(ERROR_LOG_PATH, "a", encoding="utf-8") as err_file:
-        err_file.write(msg + "\n")
+        err_file.write(msg_with_timestamp + "\n")
 
 
 def validate_wav_header(in_path: str, file_name: str) -> bool:
@@ -40,11 +50,14 @@ def validate_wav_header(in_path: str, file_name: str) -> bool:
             log_error(reason)
 
             if DELETE_NON_192KHZ_FILES:
-                try:
-                    os.remove(in_path)
-                    log_error(f"  [DELETED] {in_path}")
-                except Exception as del_ex:
-                    log_error(f"  [ERROR] Failed to delete {in_path}: {del_ex}")
+                if os.path.exists(in_path):
+                    try:
+                        os.remove(in_path)
+                        log_error(f"  [DELETED] {in_path}")
+                    except Exception as del_ex:
+                        log_error(f"  [ERROR] Failed to delete {in_path}: {del_ex}")
+                else:
+                    log_error(f"  [SKIP] File not found for deletion: {in_path}")
             return False
 
         # 2. File Duration / Corruption Check

@@ -5,15 +5,26 @@ Analyzes CSV outputs to compute average continuous bat activity duration.
 import glob
 import os
 import pandas as pd
+import datetime
+
+def log_error(msg: str):
+    """Outputs error messages to both STDERR and a dedicated log file."""
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    sys.stderr.write(msg_with_timestamp + "\n")
+    sys.stderr.flush()
+    with open("activity_window_errors.log", "a", encoding="utf-8") as err_file:
+        err_file.write(msg_with_timestamp + "\n")
 
 CSV_DIR = "/mnt/c/AudioMoth/Results"
 MIN_CONFIDENCE = 0.90
 
 
+import datetime
+
 def calculate_average_activity_window():
     csv_files = glob.glob(os.path.join(CSV_DIR, "*.csv"))
     if not csv_files:
-        print(f"No CSV files found in {CSV_DIR}")
+        log_error(f"No CSV files found in {CSV_DIR}")
         return
 
     durations = []
@@ -24,7 +35,8 @@ def calculate_average_activity_window():
 
         try:
             df = pd.read_csv(csv_path)
-        except Exception:
+        except Exception as e:
+            log_error(f"[ERROR] Failed to read CSV file {csv_path}: {e}")
             continue
 
         if df.empty or "Start (sec)" not in df.columns:
