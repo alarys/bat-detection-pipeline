@@ -6,6 +6,7 @@ import glob
 import os
 import pandas as pd
 import datetime
+import sys
 
 def log_error(msg: str):
     """Outputs error messages to both STDERR and a dedicated log file."""
