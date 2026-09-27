@@ -8,12 +8,16 @@ import pandas as pd
 import sys
 import datetime
 
-
 CSV_DIR = "/mnt/c/AudioMoth/Results"
 MIN_CONFIDENCE = 0.90
 
-
-import datetime
+def log_error(msg: str):
+    """Outputs error messages to both STDERR and a dedicated log file."""
+    msg_with_timestamp = f"{datetime.datetime.now()}: {msg}"
+    sys.stderr.write(msg_with_timestamp + "\n")
+    sys.stderr.flush()
+    with open("activity_window_errors.log", "a", encoding="utf-8") as err_file:
+        err_file.write(msg_with_timestamp + "\n")
 
 def calculate_average_activity_window():
     csv_files = glob.glob(os.path.join(CSV_DIR, "*.csv"))
